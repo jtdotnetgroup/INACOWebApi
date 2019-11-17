@@ -265,7 +265,8 @@ namespace JIT.DIME2Barcode.AppService
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Logger.Error(e.Message,e);
+                EX(-1,e.Message);
                 return false;
             }
         }

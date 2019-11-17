@@ -16,4 +16,6 @@ namespace JIT.DIME2Barcode.Entities
         [ForeignKey("FEmployeeID")]
         public Employee Employee { get; set; }
     }
+
+
 }

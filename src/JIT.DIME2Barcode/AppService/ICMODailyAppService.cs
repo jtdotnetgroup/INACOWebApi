@@ -188,6 +188,7 @@ namespace JIT.DIME2Barcode.TaskAssignment
                 throw new UserFriendlyException(string.Format("任务单：{0}不存在", input.FMOBillNo));
             }
         }
+
         [AbpAuthorize(ProductionPlanPermissionsNames.TaskPlan_Update, ProductionPlanPermissionsNames.TaskPlan_Create)]
         protected async Task InsertOrUpdateICMOSchedul(ICMODailyCreatedtEventData eventData)
         {
@@ -215,6 +216,7 @@ namespace JIT.DIME2Barcode.TaskAssignment
                 SRepository.Update(entity);
             }
         }
+
         [AbpAuthorize(ProductionPlanPermissionsNames.TaskPlan_Update, ProductionPlanPermissionsNames.TaskPlan_Create)]
         public async Task<Array> GetDialyQtyListByFMOInterID(ICMODailyGetAllInput input)
         {

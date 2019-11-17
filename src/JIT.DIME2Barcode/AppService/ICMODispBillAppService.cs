@@ -169,95 +169,7 @@ namespace JIT.DIME2Barcode.AppService
         ///// </summary>
         ///// <param name="input"></param>
         ///// <returns></returns>
-        //[AbpAuthorize(ProductionPlanPermissionsNames.TaskDispatch_Create)]
-        //public async Task<ICMODispBillListDto> Create(ICMODispBillCreateInput input)
-        //{
-        //    decimal? totalCommitQty = 0;
-
-        //    try
-        //    {
-
-        //        foreach (var dispBillI in input.Details)
-        //        {
-        //            var dailyFid = dispBillI.FID;
-        //            var dispBillList = await JIT_ICMODispBill.GetAll().Where(p => p.FSrcID == dailyFid).ToListAsync();
-        //            var icmodaily = await JIT_ICMODaily.GetAll().SingleOrDefaultAsync(p => p.FID == dailyFid);
-
-        //            if (icmodaily == null)
-        //            {
-        //                throw new AbpException("日计划单不存在");
-        //            }
-
-        //            var entity = dispBillList.SingleOrDefault(p => p.FSrcID == dispBillI.FID);
-
-        //            if (entity == null)
-        //            {
-        //                /*
-        //                 *派工单不存在，插入新派工单
-        //                 */
-        //                string fid = Guid.NewGuid().ToString();
-        //                entity = new ICMODispBill()
-        //                {
-        //                    FID = fid,
-        //                    FSrcID = dailyFid,
-        //                    FWorker = dispBillI.FWorker,
-        //                    FWorkCenterID = icmodaily.FWorkCenterID,
-        //                    FMachineID = dispBillI.FMachineID,
-        //                    FMOBillNo = dispBillI.FMOBillNo,
-        //                    FMOInterID = dispBillI.FMOInterID,
-        //                    FCommitAuxQty = dispBillI.FCommitAuxQty,
-        //                    FBiller = AbpSession.UserId.ToString(),
-        //                    FDate = DateTime.Now.Date,
-        //                    FShift = dispBillI.FShift,
-        //                    FBillNo = "DI" + DateTime.Now.ToString("yyyyMMddHHmmss") +fid.Right(4) ,
-        //                    FBillTime = DateTime.Now
-
-        //                };
-
-        //                //totalCommitQty += dispBillI.FCommitAuxQty;
-        //                icmodaily.FCommitAuxQty += dispBillI.FCommitAuxQty;
-
-        //                await JIT_ICMODispBill.InsertAsync(entity);
-        //            }
-        //            else
-        //            {
-        //                /*
-        //             *派工单已存在，更新派工单信息
-        //             */
-        //                icmodaily.FCommitAuxQty -= entity.FCommitAuxQty;
-
-        //                entity.FWorkCenterID = icmodaily.FWorkCenterID;
-        //                entity.FWorker = dispBillI.FWorker;
-        //                entity.FCommitAuxQty = dispBillI.FCommitAuxQty;
-        //                entity.FMachineID = dispBillI.FMachineID;
-        //                entity.FDate = DateTime.Now;
-        //                entity.FShift = dispBillI.FShift;
-        //                entity.FMachineID = dispBillI.FMachineID;
-        //                entity.FMOBillNo = dispBillI.FMOBillNo;
-        //                entity.FMOInterID = dispBillI.FMOInterID;
-        //                await JIT_ICMODispBill.UpdateAsync(entity);
-
-        //                icmodaily.FCommitAuxQty += entity.FCommitAuxQty;
-        //            }
-
-        //            icmodaily.FWorker = dispBillI.FWorker;
-
-        //            await JIT_ICMODaily.UpdateAsync(icmodaily);
-        //        }
-
-        //        //foreach (var dispBillI in input.Details)
-        //        //{
-        //        //    
-
-        //        return null;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e);
-        //        throw;
-        //    }
-
-        //}
+       
 
         /// <summary>
         /// 任务派工主表列表接口
@@ -406,6 +318,28 @@ namespace JIT.DIME2Barcode.AppService
                 Console.WriteLine(e.Message);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 修改派工单操作员、打包数量、派工数量
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateDispBill(ICMODispBillDto input)
+        {
+            var entry =await Repository.GetAll().SingleOrDefaultAsync(p => p.FBillNo == input.FBillNo);
+            if (entry != null&&entry.FStatus==0)
+            {
+                entry.FWorker = input.FWorker;
+                entry.FCommitAuxQty = input.FCommitAuxQty;
+                entry.FPackQty = input.FPackQty;
+
+                await Repository.UpdateAsync(entry);
+
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>

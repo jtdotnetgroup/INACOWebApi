@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Abp.Linq.Extensions;
 using CommonTools;
+using JIT.DIME2Barcode.Entities;
 using JIT.DIME2Barcode.TaskAssignment.t_equipment.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,5 +50,6 @@ namespace JIT.DIME2Barcode.AppService
                 .PageBy(input)
                 .ToListAsync();
         }
+
     }
 }
